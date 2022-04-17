@@ -199,6 +199,43 @@ const editarPedido = async (req, res) => {
   } catch (error) {
     return res.status(400).json(error.message);
   }
+};
+
+const deletarPedido = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const verificarPedido = await knex('pedidos')
+      .where({ id })
+      .first();
+
+    if (!verificarPedido) {
+      return res.status(404).json("Pedido não encontrado");
+    }
+
+    const excluirPedido = await knex("pedidos")
+      .where({ id })
+      .del()
+      .returning("*");
+    
+    if(!excluirPedido) {
+      return res.status(400).json("Erro ao excluir o pedido");
+    }
+
+    const excluirStatus = await knex("pedido_status")
+      .where({ id: verificarPedido.pedido_status_id })
+      .del()
+      .returning("*");
+  
+    if(!excluirStatus) {
+      return res.status(400).json("Erro ao excluir o status");
+    }
+
+    return res.status(200).json("Pedido excluido com sucesso!");
+
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
 }
 
 module.exports = {
@@ -206,4 +243,5 @@ module.exports = {
   listarPedidos,
   detalharPedido,
   editarPedido,
+  deletarPedido
 };
