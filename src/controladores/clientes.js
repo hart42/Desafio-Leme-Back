@@ -61,7 +61,7 @@ const listarClientes = async (req, res) => {
 };
 
 const detalharCliente = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   try {
     const cliente = await knex('clientes').where({ id }).select('*').first();
@@ -77,7 +77,7 @@ const detalharCliente = async (req, res) => {
 };
 
 const editarCliente = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const {
     nome,
     cpf,
