@@ -13,6 +13,7 @@ rotas.delete('/clientes/:id', clientes.deletarCliente);
 rotas.post("/pedidos/:id", pedidos.cadastrarPedido);
 rotas.get("/pedidos", pedidos.listarPedidos);
 rotas.get("/pedidos/:id", pedidos.detalharPedido);
+rotas.put('/pedidos/:id', pedidos.editarPedido);
 
 
 module.exports = rotas;
