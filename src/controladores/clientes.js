@@ -76,9 +76,79 @@ const detalharCliente = async (req, res) => {
   }
 };
 
+const editarCliente = async (req, res) => {
+  const id = req.params.id;
+  const {
+    nome,
+    cpf,
+    data_nasc,
+    telefone
+  } = req.body;
+
+  try {
+    await cadastroClienteSchema.validate(req.body);
+
+    const verificaId = await knex('clientes').where({ id }).first();
+
+    if (!verificaId) {
+      return res.status(404).json("O cliente procurado não foi encontrado!")
+    }
+
+    const verificarCpf = await knex('clientes')
+      .where({ cpf }).where('id', '!=', id)
+      .first();
+
+    if (verificarCpf) {
+      return res.status(401).json("Cpf ja registrado em outro cliente");
+    }
+
+    const cliente = await knex('clientes')
+      .update({
+        nome,
+        cpf,
+        data_nasc,
+        telefone
+      }).where({ id })
+      .returning('*');
+
+    if (!cliente) {
+      return res.status(400).json("O cliente não foi editado.");
+    }
+
+    return res.status(201).json("Cliente editado com sucesso");
+
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+};
+
+const deletarCliente = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const verificarCliente = await knex('clientes').where({ id }).first();
+
+    if (!verificarCliente) {
+      return res.status(404).json("Cliente não encontrado");
+    }
+
+    const excluirCliente = await knex('clientes').where({ id }).del().returning('*');
+
+    if (!excluirCliente) {
+      return res.status(400).json("Cliente não foi deletado");
+    }
+
+    return res.status(200).json("cliente excluido com sucesso!");
+
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+};
 
 module.exports = {
   cadastrarCliente,
   listarClientes,
   detalharCliente,
+  editarCliente,
+  deletarCliente
 };
