@@ -37,3 +37,8 @@ create table pedidos_imagens (
   	imagen varchar(255),
   	capa varchar(255)
 );
+
+
+alter table pedido_status add column solicitado boolean default true;
+alter table pedido_status add column concluido boolean default false;
+alter table pedido_status add column cancelado boolean default false;
