@@ -53,8 +53,42 @@ const cadastrarPedido = async (req, res) => {
   }
 };
 
+const listarPedidos = async (req, res) => {
+  try {
+    const pedidos = await knex("pedidos").select("*");
 
+    if(pedidos[0] === undefined) {
+      return res.status(400).json("Não foi encontrado nenhum pedido");
+    }
+
+    return res.status(200).json(pedidos);
+
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+};
+
+const detalharPedido = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const pedido = await knex('pedidos')
+      .where({ id })
+      .select('*')
+      .first();
+
+    if(!pedido) {
+      return res.status(404).json("Pedido não encontrado");
+    }
+
+    return res.status(200).json(pedido);
+
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
+};
 
 module.exports = {
   cadastrarPedido,
+  listarPedidos,
+  detalharPedido,
 };

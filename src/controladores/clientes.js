@@ -12,7 +12,9 @@ const cadastrarCliente = async (req, res) => {
   try {
     await cadastroClienteSchema.validate(req.body);
 
-    const verificarCPF = await knex('clientes').where({ cpf }).first();
+    const verificarCPF = await knex('clientes')
+      .where({ cpf })
+      .first();
 
     if(verificarCPF) {
       return res.status(401).json("CPF ja cadastrado");
@@ -64,9 +66,12 @@ const detalharCliente = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const cliente = await knex('clientes').where({ id }).select('*').first();
+    const cliente = await knex('clientes')
+      .where({ id })
+      .select('*')
+      .first();
 
-    if (cliente === undefined) {
+    if (!cliente) {
       return res.status(404).json("O cliente procurado não existe");
     }
 
@@ -88,7 +93,9 @@ const editarCliente = async (req, res) => {
   try {
     await cadastroClienteSchema.validate(req.body);
 
-    const verificaId = await knex('clientes').where({ id }).first();
+    const verificaId = await knex('clientes')
+      .where({ id })
+      .first();
 
     if (!verificaId) {
       return res.status(404).json("O cliente procurado não foi encontrado!")
@@ -126,13 +133,18 @@ const deletarCliente = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const verificarCliente = await knex('clientes').where({ id }).first();
+    const verificarCliente = await knex('clientes')
+      .where({ id })
+      .first();
 
     if (!verificarCliente) {
       return res.status(404).json("Cliente não encontrado");
     }
 
-    const excluirCliente = await knex('clientes').where({ id }).del().returning('*');
+    const excluirCliente = await knex('clientes')
+      .where({ id })
+      .del()
+      .returning('*');
 
     if (!excluirCliente) {
       return res.status(400).json("Cliente não foi deletado");
